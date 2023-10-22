@@ -15,6 +15,7 @@ import Billing from './Billing.tsx';
 import ViewOrder from './ViewOrder.tsx';
 import DetailOrder from './DetailOrder.tsx';
 import ManageEmployee from './ManageEmployee.tsx';
+import DetailEmployee from './DetailEmployee.tsx';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/manage-employee",
         element: <ManageEmployee />,
+      },
+      {
+        path: "/manage-employee/:id",
+        element: <DetailEmployee />,
       }
     ],
   }
