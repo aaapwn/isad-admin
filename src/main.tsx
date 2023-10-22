@@ -16,6 +16,8 @@ import ViewOrder from './ViewOrder.tsx';
 import DetailOrder from './DetailOrder.tsx';
 import ManageEmployee from './ManageEmployee.tsx';
 import DetailEmployee from './DetailEmployee.tsx';
+import ManageStock from './ManageStock.tsx';
+import ViewQueue from './ViewQueue.tsx';
 
 const router = createBrowserRouter([
   {
@@ -49,8 +51,16 @@ const router = createBrowserRouter([
       {
         path: "/manage-employee/:id",
         element: <DetailEmployee />,
-      }
+      },
+      {
+        path: "/manage-stock",
+        element: <ManageStock />,
+      },
     ],
+  },
+  {
+    path: "/view-queue",
+    element: <ViewQueue />,
   }
 ]);
 
