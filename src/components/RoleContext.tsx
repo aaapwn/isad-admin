@@ -8,7 +8,7 @@ type UserRoleType = {
 const UserRole = createContext<UserRoleType | null>(null);
 
 const RoleContext = ({children}:{children:ReactNode}) => {
-    const [role, setRole] = useState<string>("")
+    const [role, setRole] = useState<string>("customer")
     return (
         <UserRole.Provider value={{role, setRole}}>
             {children}

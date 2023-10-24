@@ -1,41 +1,27 @@
-
-interface Queue {
-    queue: number;
-    customer_id: number;
-}
-
-const queues: Queue[] = [
-    {
-        queue: 1,
-        customer_id: 3306,
-    },
-    {
-        queue: 2,
-        customer_id: 3307,
-    },
-    {
-        queue: 3,
-        customer_id: 3308,
-    },
-    {
-        queue: 4,
-        customer_id: 3309,
-    },
-    {
-        queue: 5,
-        customer_id: 3310,
-    }
-]
+import { useEffect, useState } from "react"
+import { getQueue } from "./api/queue/functions"
 
 const ViewQueue = () => {
+  const [queues, setQueues] = useState<any>([])
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getQueue()
+      setQueues(data)
+    }
+    let interval = setInterval(() => {
+		fetchData();
+	}, 5000);
+	return () => {
+		clearInterval(interval);
+	};
+  }, [])
   return (
     <div>
         {
-            queues.map((queue) => {
+            queues.map((queue:any) => {
                 return (
-                    <div className="flex justify-between items-center px-5 py-3 border-b border-gray-300" key={queue.queue}>
-                        <div className="text-2xl font-semibold">คิวที่ {queue.queue}</div>
-                        <div className="text-2xl font-semibold">รหัสลูกค้า {queue.customer_id}</div>
+                    <div className="flex justify-between items-center px-5 py-3 border-b border-gray-300" key={queue.id}>
+                        <div className="text-2xl font-semibold">รหัสลูกค้า {queue.id}</div>
                     </div>
                 )
             })

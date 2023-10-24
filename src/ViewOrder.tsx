@@ -16,46 +16,19 @@ import {
 import { Link } from "react-router-dom";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useState } from "react";
-  
-  interface Order {
-    queue: number;
-    table: number;
-    status: string;
-  }
-  
-  const orders: Order[] = [
-    {
-      queue: 3,
-      table: 1,
-      status: "waiting",
-    },
-    {
-      queue: 4,
-      table: 9,
-      status: "waiting",
-    },
-    {
-      queue: 2,
-      table: 12,
-      status: "cancel",
-    },
-    {
-      queue: 1,
-      table: 7,
-      status: "success",
-    },
-  ];
+import { useState, useEffect } from "react";
+import { getOrder } from "./api/order/function";
+
   const ViewOrder = () => {
-    const [allOrder, setAllOrder] = useState<Order[]>(orders)
-    const [disOrder, setDisOrder] = useState<Order[]>(orders.filter((order) => order.status === "waiting"))
-    const [selectStatus, setSelectStatus] = useState<string>("waiting")
+    const [selectStatus, setSelectStatus] = useState<string>("WAITING")
+    const [allOrder, setAllOrder] = useState<any>([])
+    const [disOrder, setDisOrder] = useState<any>(allOrder.filter((order:any) => order.status === selectStatus))
     const onChageRadio = (value: string) => {
-      setDisOrder(allOrder.filter((order) => order.status === value).sort((a:Order, b:Order) => {return a.queue - b.queue}))
+      setDisOrder(allOrder.filter((order:any) => order.status === value).sort((a:any, b:any) => {return a.id - b.id}))
       setSelectStatus(value)
     }
     const onStatusChange = (value: string, queue:number) => {
-      const newOrder = allOrder.map((order) => {
+      const newOrder = allOrder.map((order:any) => {
         if (order.queue === queue) {
           return {
             ...order,
@@ -64,9 +37,16 @@ import { useState } from "react";
         }
         return order
       })
-      setDisOrder(newOrder.filter((order) => order.status === selectStatus).sort((a:Order, b:Order) => {return a.queue - b.queue}))
+      setDisOrder(newOrder.filter((order:any) => order.status === selectStatus).sort((a:any, b:any) => {return a.id - b.id}))
       setAllOrder(newOrder)
     }
+
+    useEffect(() => {
+      getOrder().then((res) => {
+        setAllOrder(res)
+        onChageRadio("WAITING")
+      })
+    })
     return (
         <div className="py-5 px-3 rounded-t-3xl relative overflow-auto mt-20">
             <RadioGroup defaultValue="waiting" className="flex justify-end w-full gap-x-5 px-5 mb-5" onValueChange={(value:string) => onChageRadio(value)}>
@@ -93,19 +73,19 @@ import { useState } from "react";
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {disOrder.map((order) => (
-                  <TableRow key={order.queue} className="font-semibold text-center">
-                    <TableCell>{order.queue}</TableCell>
-                    <TableCell>{order.table}</TableCell>
+                {disOrder.map((order:any) => (
+                  <TableRow key={order.id} className="font-semibold text-center">
+                    <TableCell>{order.id}</TableCell>
+                    <TableCell>{1}</TableCell>
                     <TableCell className="font-semibold flex justify-center">
                       <Select defaultValue={order.status} onValueChange={(value:string) => {onStatusChange(value, order.queue)}}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Theme" className=""/>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="waiting" className="">ยังไม่จัดเสิร์ฟ</SelectItem>
-                          <SelectItem value="success">เสิร์ฟแล้ว</SelectItem>
-                          <SelectItem value="cancel">ยกเลิก</SelectItem>
+                          <SelectItem value="WAITING" className="">ยังไม่จัดเสิร์ฟ</SelectItem>
+                          <SelectItem value="SUCCESS">เสิร์ฟแล้ว</SelectItem>
+                          <SelectItem value="CANCEL">ยกเลิก</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>

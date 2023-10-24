@@ -1,32 +1,19 @@
-import { useState } from "react"
-// import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { getEmployeeById, updateEmployee, deleteEmployee } from "./api/employee/function";
 import toast from "react-hot-toast";
-
-interface Employee {
-    id: number;
-    firstname: string;
-    lastname: string;
-    age: number;
-    tel: string;
-}
 
 const DetailEmployee = () => {
   const navigate = useNavigate()
-//   const { id } = useParams<{id:string}>()
+  const { id } = useParams<{id:string}>()
   const [onEdit, setOnEdit] = useState<boolean>(false)
 
   
-  const [employee, setEmployee] = useState<Employee>({
-      id: 1,
-      firstname: "Siwakorn",
-      lastname: "Somjit",
-      age: 20,
-      tel: "0123456789"
-    })
+  const [employee, setEmployee] = useState<any>({})
     
     const [newFirstname, setNewFirstname] = useState<string>(employee.firstname)
     const [newLastname, setNewLastname] = useState<string>(employee.lastname)
@@ -39,6 +26,12 @@ const DetailEmployee = () => {
             firstname: newFirstname,
             lastname: newLastname,
             age: newAge,
+            tel: newTel
+        })
+        updateEmployee(Number(id), {
+            firstName: newFirstname,
+            lastName: newLastname,
+            age: Number(newAge),
             tel: newTel
         })
         setOnEdit(false)
@@ -54,9 +47,18 @@ const DetailEmployee = () => {
     }
 
     const onDelete = () => {
+        deleteEmployee(Number(id))
         navigate("/manage-employee")
         toast.success("ลบข้อมูลสำเร็จ")
     }
+    useEffect(() => {
+        getEmployeeById(Number(id)).then((data) => {setEmployee(data)})
+        setNewFirstname(employee.firstName)
+        setNewLastname(employee.lastName)
+        setNewAge(employee.age)
+        setNewTel(employee.tel)
+    }, [])
+
   return (
     <div className="w-full h-screen flex justify-center items-center">
         <div className="w-4/12">

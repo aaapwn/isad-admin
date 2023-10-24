@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom"
 import { UserRole } from "./components/RoleContext"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import {
   Table,
   TableBody,
@@ -9,39 +9,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getEmployee } from "./api/employee/function";
 
-interface Employee {
-  id: number;
-  firstname: string;
-  lastname: string;
-  age: number;
-  tel: string;
-}
-
-const employees: Employee[] = [
-  {
-    id: 1,
-    firstname: "Siwakorn",
-    lastname: "Somjit",
-    age: 20,
-    tel: "0123456789"
-  },
-  {
-    id: 2,
-    firstname: "Puwit",
-    lastname: "Nunpan",
-    age: 20,
-    tel: "0123456789"
-  },
-]
 const ManageEmployee = () => {
   const { role } = useContext(UserRole)!
+  const [ employees, setEmployees ] = useState<any>([])
   const navigate = useNavigate()
 
     useEffect(() => {
       if (role === "employee") {
           navigate(-1)
+          return
       }
+      getEmployee().then((data) => {setEmployees(data)})
     }, [])
 
   return (
@@ -55,10 +35,10 @@ const ManageEmployee = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {employees.map((person, index) => (
+          {employees.map((person:any, index:number) => (
             <TableRow key={index} className="font-semibold text-center">
               <TableCell>{person.id}</TableCell>
-              <TableCell>{person.firstname} {person.lastname}</TableCell>
+              <TableCell>{person.firstName} {person.lastName}</TableCell>
               <TableCell>{person.tel}</TableCell>
               <TableCell><Link to={`/manage-employee/${person.id}`} className="underline">View</Link></TableCell>
             </TableRow>
